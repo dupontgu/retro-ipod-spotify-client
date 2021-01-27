@@ -1,3 +1,7 @@
+# This code is a mess.
+# This is me learning Python as I go.
+# This is not how I write code for my day job.
+
 import tkinter as tk 
 import socket
 import json
