@@ -30,11 +30,14 @@
 #define BUTTON_STATE_INDEX 1
 #define WHEEL_POSITION_INDEX 2
 
+// used to store the current packet
 uint32_t bits = 0;
+// used to store the previous full packet
 uint32_t lastBits = 0;
 uint8_t bitIndex = 0;
 uint8_t oneCount = 0;
 uint8_t recording = 0;
+// indicates whether the data pin is high or low
 uint8_t dataBit = 1;
 uint8_t lastPosition = 255;
 int hapticWaveId = -1;
@@ -48,14 +51,15 @@ char buttons[] = {
     WHEEL_TOUCH_BIT
 };
 
+// all valid click wheel packets start with this
 const uint32_t PACKET_START = 0b01101;
 
 int sockfd; 
 char buffer[BUFFER_SIZE]; 
 char prev_buffer[BUFFER_SIZE];
-char *hello = "Hello from client"; 
 struct sockaddr_in servaddr; 
 
+// helper function to print packets as binary
 void printBinary(uint32_t value) {
     for(uint8_t i = 0; i < 32; i++) {
         if (value & 1)
@@ -68,6 +72,7 @@ void printBinary(uint32_t value) {
     printf("\n");
 }
 
+// parse packet and broadcast data
 void sendPacket() {
     if ((bits & PACKET_START) != PACKET_START) {
         return;
@@ -89,6 +94,7 @@ void sendPacket() {
         }
     }
     uint8_t wheelPosition = (bits >> 16) & 0xFF;
+    // send haptics every other position. too sensitive otherwise
     if (wheelPosition != lastPosition && wheelPosition % 2 == 0) {
         if (hapticWaveId != -1) {
             gpioWaveTxSend(hapticWaveId, PI_WAVE_MODE_ONE_SHOT);
@@ -107,6 +113,7 @@ void sendPacket() {
     memcpy(prev_buffer, buffer, BUFFER_SIZE);
 }
 
+// Function to set the kth bit of n 
 int setBit(int n, int k) { 
     return (n | (1 << (k - 1))); 
 } 
@@ -118,23 +125,27 @@ int clearBit(int n, int k) {
 
 void onClockEdge(int gpio, int level, uint32_t tick) {
     if (!level) {
+        // only care about rising edge
         return;
     }
     if (dataBit == 0) {
         recording = 1;
         oneCount = 0;
     } else {
+        // 32 1's in a row means we're definitely not in the middle of a packet
         if (++oneCount >= BIT_COUNT) {
             recording = 0;
             bitIndex = 0;
         }
     }
+    // in the middle of the packet
     if (recording == 1) {
         if (dataBit) {
             bits = setBit(bits, bitIndex);
         } else {
             bits = clearBit(bits, bitIndex);
         }
+        // we've collected the whole packet
         if (++bitIndex == 32) {
             bitIndex = 0;
             sendPacket();
@@ -156,7 +167,6 @@ int main(void *args){
   
     memset(&servaddr, 0, sizeof(servaddr)); 
       
-    // Filling server information 
     servaddr.sin_family = AF_INET; 
     servaddr.sin_port = htons(PORT); 
     servaddr.sin_addr.s_addr = INADDR_ANY; 
@@ -165,6 +175,7 @@ int main(void *args){
        exit(1);
     }
 
+    // haptic waveform - just a simple on-off pulse
     gpioSetMode(HAPTIC_PIN, PI_OUTPUT);
     gpioPulse_t pulse[2];
     pulse[0].gpioOn = (1<<HAPTIC_PIN);
