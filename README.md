@@ -9,7 +9,6 @@ This code is meant to accompany [this project](https://hackaday.io/project/17703
 ```
 sudo apt-get update 
 sudo apt-get upgrade
-
 ```
 2. Install Required Packages.
 
@@ -23,8 +22,6 @@ sudo apt-get install python3-tk
 
 sudo apt-get install python3-pigpio
 
-
-
 ```
 3. Install Dependencies
 
@@ -37,4 +34,10 @@ pip3 install -r requirements.txt
 git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
+```
+
+5. Install Openbox
+```
+git clone git://git.openbox.org/mikachu/openbox openbox
+cd openbox
 ```
