@@ -12,8 +12,11 @@ sudo apt-get upgrade
 ```
 2. Install Required Packages.
 
-Installation for python3-pip, raspotify, python3-tk, 
+Installation for python3-pip, raspotify, python3-tk, openbox
 ```
+
+sudo apt install python-setuptools python3-setuptools
+
 sudo apt install python3-pip
 
 sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
@@ -36,6 +39,14 @@ pip3 install -r requirements.txt
 git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
+```
+5. Install PiGPIO
+```
+wget https://github.com/joan2937/pigpio/archive/master.zip
+unzip master.zip
+cd pigpio-master
+make
+sudo make install
 ```
 
 6. Setup Spotify API
