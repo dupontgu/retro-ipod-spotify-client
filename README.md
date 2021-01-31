@@ -22,6 +22,8 @@ sudo apt-get install python3-tk
 
 sudo apt-get install python3-pigpio
 
+sudo apt-get install redis-server
+
 ```
 3. Install Dependencies
 
