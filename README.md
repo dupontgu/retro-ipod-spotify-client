@@ -20,8 +20,6 @@ sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
 sudo apt-get install python3-tk 
 
-sudo apt-get install python3-pigpio
-
 sudo apt-get install redis-server
 
 ```
