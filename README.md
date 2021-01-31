@@ -22,6 +22,8 @@ sudo apt-get install python3-tk
 
 sudo apt-get install redis-server
 
+sudo apt-get install openbox
+
 ```
 3. Install Dependencies
 
@@ -34,12 +36,6 @@ pip3 install -r requirements.txt
 git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
-```
-
-5. Install Openbox
-```
-git clone git://git.openbox.org/mikachu/openbox openbox
-cd openbox
 ```
 
 6. Setup Spotify API
