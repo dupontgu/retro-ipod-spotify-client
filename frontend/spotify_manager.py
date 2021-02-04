@@ -83,10 +83,7 @@ def check_internet(request):
         has_internet = True
     except Exception as _:
         print("no ints")
-        print(_.http_status)
-        print(_.code)
-        print(_.message)
-        print(_.reason)
+        print(_)
         result = None
         has_internet = False
     return result
