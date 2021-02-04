@@ -61,11 +61,16 @@ class SearchResults():
         self.albums = albums
         self.album_track_map = album_track_map
 
-scope = "user-library-read,user-follow-read"
+scope = "user-library-read,user-follow-read,app-remote-control,streaming,playlist-read-private,playlist-read-collaborative,user-read-playback-state,user-read-currently-playing,user-read-recently-played,user-top-read,user-read-playback-position"
 
 DATASTORE = datastore.Datastore()
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
+    client_id='144fae430b964a03813aa53da2b365e3', 
+    client_secret='cbd6f4c12da64644aab1923023e6d088', 
+    redirect_uri='http://localhost:1234/callback/', scope=scope
+))
+
 pageSize = 50
 has_internet = False
 
@@ -83,6 +88,7 @@ def check_internet(request):
 def get_playlist(id):
     # TODO optimize query
     results = sp.playlist(id)
+    print("playlists are:", results)
     tracks = []
     for _, item in enumerate(results['tracks']['items']):
         track = item['track']
@@ -127,9 +133,14 @@ def get_album_tracks(id):
 
 def refresh_devices():
     results = sp.devices()
+    print("spotify refresh devices found results:", results)
     DATASTORE.clearDevices()
     for _, item in enumerate(results['devices']):
         if "Spotifypod" in item['name']:
+            print(item['name'])
+            device = UserDevice(item['id'], item['name'], item['is_active'])
+            DATASTORE.setUserDevice(device)
+        else:
             print(item['name'])
             device = UserDevice(item['id'], item['name'], item['is_active'])
             DATASTORE.setUserDevice(device)
