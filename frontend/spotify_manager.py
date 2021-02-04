@@ -71,6 +71,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     redirect_uri='http://localhost:1234/callback/', scope=scope
 ))
 
+print(sp)
+
 pageSize = 50
 has_internet = False
 
