@@ -136,7 +136,7 @@ def refresh_devices():
     print("spotify refresh devices found results:", results)
     DATASTORE.clearDevices()
     for _, item in enumerate(results['devices']):
-        if "Spotifypod" in item['name']:
+        if "SpotiPod" in item['name']:
             print(item['name'])
             device = UserDevice(item['id'], item['name'], item['is_active'])
             DATASTORE.setUserDevice(device)
@@ -256,6 +256,7 @@ def play_from_playlist(playist_uri, track_uri, device_id = None):
     refresh_now_playing()
 
 def get_now_playing():
+    print("Now Playing")
     response = check_internet(lambda: sp.current_playback())
     if (not response or not response['item']):
         return None
@@ -320,6 +321,7 @@ def search(query):
     return SearchResults(tracks, artists, albums, album_track_map)
 
 def refresh_now_playing():
+    print("DATASTORE Now playing")
     DATASTORE.now_playing = get_now_playing()
 
 def play_next():
@@ -357,12 +359,15 @@ def toggle_play():
 
 def bg_loop():
     global sleep_time
+    print(sleep_time)
+    print("Loop")
     while True:
         refresh_now_playing()
         time.sleep(sleep_time)
         sleep_time = min(4, sleep_time * 2)
 
 sleep_time = 0.3
+print("start manager")
 thread = threading.Thread(target=bg_loop, args=())
 thread.daemon = True                            # Daemonize thread
 thread.start()

@@ -570,6 +570,7 @@ def app_main_loop():
     finally:
         app.after(2, app_main_loop)
 
+print("START")
 app.bind('<KeyPress>', onKeyPress)
 app.after(5, app_main_loop)
 app.mainloop()
