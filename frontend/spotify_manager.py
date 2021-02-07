@@ -34,6 +34,28 @@ class UserAlbum():
     def __str__(self):
         return self.name + " - " + self.artist
 
+class UserEpisode():
+    __slots__ = ['name', 'publisher', 'show', 'uri']
+    def __init__(self, name, publisher, show, uri):
+        self.name = name
+        self.publisher = publisher
+        self.show = show
+        self.uri = uri
+
+    def __str__(self):
+        return self.name + " - " + self.publisher
+
+class UserShow():
+    __slots__ = ['name', 'publisher', 'episode_count', 'uri']
+    def __init__(self, name, publisher, episode_count, uri):
+        self.name = name
+        self.publisher = publisher
+        self.episode_count = episode_count
+        self.uri = uri
+
+    def __str__(self):
+        return self.name + " - " + self.publisher
+
 class UserArtist():
     __slots__ = ['name', 'uri']
     def __init__(self, name, uri):
@@ -71,7 +93,6 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     redirect_uri='http://my-website.site/callback/', scope=scope
 ))
 
-print(sp)
 
 pageSize = 50
 has_internet = False
@@ -83,7 +104,6 @@ def check_internet(request):
         has_internet = True
     except Exception as _:
         print("no ints")
-        print(_)
         result = None
         has_internet = False
     return result
@@ -97,6 +117,15 @@ def get_playlist(id):
         track = item['track']
         tracks.append(UserTrack(track['name'], track['artists'][0]['name'], track['album']['name'], track['uri']))
     return (UserPlaylist(results['name'], results['uri'], len(tracks)), tracks)
+
+def get_show(id):
+    results = sp.show(id)
+    show = results['name']
+    publisher = results['publisher']
+    episodes = []
+    for _, item in enumerate(results['episodes']['items']):
+        episodes.append(UserEpisode(item['name'], publisher, show, item['uri']))
+    return (UserShow(results['name'], publisher, len(episodes), results['uri']), episodes)
 
 def get_album(id):
     # TODO optimize query
@@ -156,6 +185,15 @@ def parse_album(album):
     for _, track in enumerate(album['tracks']['items']):
         tracks.append(UserTrack(track['name'], artist, album['name'], track['uri']))
     return (UserAlbum(album['name'], artist, len(tracks), album['uri']), tracks)
+
+def parse_show(show):
+    publisher = show['publisher']
+    episodes = []
+    if 'episodes' not in show :
+        return get_show(show['id'])
+    for _, episode in enumerate(show['episodes']['items']):
+        episodes.append(UserEpisode(episode['name'], publisher, show['name'], episode['uri']))
+    return (UserShow(show['name'], publisher, len(episodes), show['uri']), episodes)
     
 def refresh_data():
     DATASTORE.clear()
@@ -224,6 +262,15 @@ def refresh_data():
 
     print("Refreshed new releases")
 
+    results = sp.current_user_saved_shows(limit=pageSize)
+    if(len(results['items']) > 0):
+        offset = results['offset']
+        for idx, item in enumerate(results['items']):
+            show, episodes = parse_show(item['show'])
+            DATASTORE.setShow(show, episodes, index=idx)
+
+    print("Spotify Shows fetched: " + str(DATASTORE.getShowsCount()))
+
     refresh_devices()
     print("Refreshed devices")
 
@@ -247,6 +294,15 @@ def play_track(track_uri, device_id = None):
         device_id = devices[0].id
     sp.start_playback(device_id=device_id, uris=[track_uri])
 
+def play_episode(episode_uri, device_id = None):
+    if(not device_id):
+        devices = DATASTORE.getAllSavedDevices()
+        if(len(devices) == 0):
+            print("error! no devices")
+            return
+        device_id = devices[0].id
+    sp.start_playback(device_id=device_id, uris=[episode_uri])
+
 def play_from_playlist(playist_uri, track_uri, device_id = None):
     print("playing ", playist_uri, track_uri)
     if (not device_id):
@@ -258,11 +314,31 @@ def play_from_playlist(playist_uri, track_uri, device_id = None):
     sp.start_playback(device_id=device_id, context_uri=playist_uri, offset={"uri": track_uri})
     refresh_now_playing()
 
+def play_from_show(show_uri, episode_uri, device_id = None):
+    print("playing ", show_uri, episode_uri)
+    if(not device_id):
+        devices = DATASTORE.getAllSavedDevices()
+        if (len(devices) == 0):
+            print("error! no devices")
+            return
+        device_id = devices[0].id
+    sp.start_playback(device_id=device_id, context_uri=show_uri, offset={"uri": episode_uri})
+    refresh_now_playing()
+
 def get_now_playing():
-    print("Now Playing")
-    response = check_internet(lambda: sp.current_playback())
-    if (not response or not response['item']):
+    response = check_internet(lambda: sp.current_playback(additional_types='episode'))
+    if (not response):
         return None
+
+    if (response['currently_playing_type'] == 'episode'):
+        return get_now_playing_episode(response = response)
+    else:
+        return get_now_playing_track(response = response)
+
+def get_now_playing_track(response = None):
+    if(not response or not response['item']):
+        return None
+
     context = response['context']
     track = response['item']
     track_uri = track['uri']
@@ -305,6 +381,28 @@ def get_now_playing():
         now_playing['context_name'] = album.name
     return now_playing
 
+def get_now_playing_episode(response = None):
+    if(not response or not response['item']):
+        return None
+
+    episode = response['item']
+    episode_uri = episode['uri']
+    publisher = episode['show']['publisher']
+    now_playing = {
+        'name': episode['name'],
+        'track_uri': episode_uri,
+        'artist': publisher,
+        'album': episode['show']['name'],
+        'duration': episode['duration_ms'],
+        'is_playing': response['is_playing'],
+        'progress': response['progress_ms'],
+        'context_name': publisher,
+        'track_index': -1,
+        'timestamp': time.time()
+    }
+    
+    return now_playing
+
 def search(query):
     track_results = sp.search(query, limit=5, type='track')
     tracks = []
@@ -324,7 +422,6 @@ def search(query):
     return SearchResults(tracks, artists, albums, album_track_map)
 
 def refresh_now_playing():
-    print("DATASTORE Now playing")
     DATASTORE.now_playing = get_now_playing()
 
 def play_next():
@@ -362,15 +459,12 @@ def toggle_play():
 
 def bg_loop():
     global sleep_time
-    print(sleep_time)
-    print("Loop")
     while True:
         refresh_now_playing()
         time.sleep(sleep_time)
         sleep_time = min(4, sleep_time * 2)
 
 sleep_time = 0.3
-print("start manager")
 thread = threading.Thread(target=bg_loop, args=())
 thread.daemon = True                            # Daemonize thread
 thread.start()

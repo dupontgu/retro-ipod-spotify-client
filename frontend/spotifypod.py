@@ -2,6 +2,7 @@
 # This is me learning Python as I go.
 # This is not how I write code for my day job.
 
+import spotify_manager
 import tkinter as tk 
 import socket
 import json
@@ -570,7 +571,7 @@ def app_main_loop():
     finally:
         app.after(2, app_main_loop)
 
-print("START")
+spotify_manager.refresh_data()
 app.bind('<KeyPress>', onKeyPress)
 app.after(5, app_main_loop)
 app.mainloop()
