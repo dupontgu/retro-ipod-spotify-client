@@ -60,3 +60,19 @@ Last but not least, if you want to make sure all your playlists artists, etc are
 
 instead of calling refresh_device, you can execute refresh_data. This will sync all your data and then will eceute refresh.devices. This will make the boot up way slower! but I will synchronize every single time you switch on :). 
 If you dont run at least once `refresh_data()` no playlist, artist or anything related with your account will be displayed!
+
+**Configure Raspotify**
+
+`sudo nano /etc/default/raspotify`
+
+Uncomment and fill the following line:
+
+`OPTIONS="--username <USERNAME> --password <PASSWORD>"`
+
+And maybe you want also to consider the following:
+
+`# The displayed device type in Spotify clients. `
+`# Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",`
+`# "avr" (Audio/Video Receiver), "stb" (Set-Top Box), and "audiodongle".`
+`DEVICE_TYPE="smartphone"`
+
