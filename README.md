@@ -42,7 +42,7 @@ Inside, make sure the following is there:
 and add the following command to launch spotifypod.py:
 
 `cd /home/pi/fork/retro-ipod-spotify-client/frontend/`
-`sudo -H -u pi python3 spotifypod.py >> spotifypod.log &`
+`sudo -H -u pi python3 spotifypod.py &`
 `sudo /home/pi/fork/retro-ipod-spotify-client/clickwheel/click &`
 
 _Make sure that the paths are ok with your setup!!_
