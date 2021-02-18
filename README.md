@@ -1,6 +1,6 @@
 # sPot
 
-This code is meant to accompany [this project](https://hackaday.io/project/177034-spot-spotify-in-a-4th-gen-ipod-2004) in which I build a Spotify client into an iPod "Classic" from 2004. Everything is meant to run on a Raspberry Pi Zero W.
+This code is meant to accompany [this project](https://hackaday.io/project/177034-spot-spotify-in-a-4th-gen-ipod-2004) in which a Spotify client is built into an iPod "Classic" from 2004. Everything is meant to run on a Raspberry Pi Zero W.
 
 Since we are using the lite version of raspbian, some extra packages need to be installed:
 
@@ -74,7 +74,7 @@ and add the following command to launch spotifypod.py:
 
 _Make sure that the paths are ok with your setup!!_
 
-in ` sudo nano /etc/xdg/openbox/environment` I set all the variables needed to run spotifypod.py ( SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,SPOTIPY_REDIRECT_URI)
+in ` sudo nano /etc/xdg/openbox/environment` all the variables needed to run spotifypod.py are set( SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,SPOTIPY_REDIRECT_URI)
 
 
 `export SPOTIPY_CLIENT_ID='your_SPOTIPY_CLIENT_ID'`
