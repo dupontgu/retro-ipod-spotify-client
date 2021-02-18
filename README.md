@@ -168,3 +168,9 @@ And maybe you want also to consider the following:
 
 DEVICE_TYPE="smartphone"
 ```
+
+# Wiring
+
+Here is the wiring of the hardware, as of revision 1. Note that the pin numbers correlate to those referenced in [click.c](./clickwheel/click.c)
+
+![Wiring Diagram](./.docs/sPot_schematic.png)
