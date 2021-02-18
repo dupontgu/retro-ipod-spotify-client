@@ -92,7 +92,7 @@ Last but not least, if you want to make sure all your playlists artists, etc are
 `spotify_manager.refresh_data()`
 
 
-instead of calling refresh_device, you can execute refresh_data. This will sync all your data and then will eceute refresh.devices. This will make the boot up way slower! but I will synchronize every single time you switch on :). 
+instead of calling refresh_device, you can execute refresh_data. This will sync all your data and then will eceute refresh.devices. This will make the boot up way slower! but it will synchronize every single time you switch on :). 
 If you dont run at least once `refresh_data()` no playlist, artist or anything related with your account will be displayed!
 
 **Configure Raspotify**
