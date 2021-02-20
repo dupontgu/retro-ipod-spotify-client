@@ -571,7 +571,6 @@ def app_main_loop():
     finally:
         app.after(2, app_main_loop)
 
-spotify_manager.refresh_data()
 app.bind('<KeyPress>', onKeyPress)
 app.after(5, app_main_loop)
 app.mainloop()
