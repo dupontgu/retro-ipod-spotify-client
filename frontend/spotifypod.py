@@ -2,7 +2,6 @@
 # This is me learning Python as I go.
 # This is not how I write code for my day job.
 
-import spotify_manager
 import tkinter as tk 
 import socket
 import json
@@ -28,13 +27,13 @@ UDP_PORT = 9090
 
 DIVIDER_HEIGHT = 3
 
-UP_KEY_CODE = 8320768 if platform == "darwin" else 98
-DOWN_KEY_CODE = 8255233 if platform == "darwin" else 104
-LEFT_KEY_CODE = 8124162 if platform == "darwin" else 100
-RIGHT_KEY_CODE = 8189699 if platform == "darwin" else 102
-PREV_KEY_CODE = 2818092 if platform == "darwin" else 33
-NEXT_KEY_CODE = 3080238 if platform == "darwin" else 57
-PLAY_KEY_CODE = 3211296 if platform == "darwin" else 65
+UP_KEY_CODE = 8320768 if platform == "darwin" else 111
+DOWN_KEY_CODE = 8255233 if platform == "darwin" else 116
+LEFT_KEY_CODE = 8124162 if platform == "darwin" else 113
+RIGHT_KEY_CODE = 8189699 if platform == "darwin" else 114
+PREV_KEY_CODE = 2818092 if platform == "darwin" else 0
+NEXT_KEY_CODE = 3080238 if platform == "darwin" else 0
+PLAY_KEY_CODE = 3211296 if platform == "darwin" else 0
 
 SCREEN_TIMEOUT_SECONDS = 60
 
