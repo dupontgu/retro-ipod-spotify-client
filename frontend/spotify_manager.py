@@ -168,7 +168,7 @@ def refresh_devices():
     print("spotify refresh devices found results:", results)
     DATASTORE.clearDevices()
     for _, item in enumerate(results['devices']):
-        if "SpotiPod" in item['name']:
+        if "Spotifypod" in item['name']:
             print(item['name'])
             device = UserDevice(item['id'], item['name'], item['is_active'])
             DATASTORE.setUserDevice(device)
