@@ -22,6 +22,16 @@ class Datastore():
     def getNewReleasesCount(self):
         return len(self.r.keys("nr-index:*"))
 
+    def getShowsCount(self):
+        return len(self.r.keys("show-index:*"))
+
+    def setShow(self, show, episodes, index = -1):
+        show_id = show.uri.split(":")[-1]
+        self.r.set("show-uri:"+str(show_id), pickle.dumps(show))
+        self.r.set("show-episodes:"+str(show_id), pickle.dumps(episodes))
+        if(index > -1):
+            self.r.set("show-index:"+str(index), show_id)
+
     def setNewRelease(self, album, tracks, index = -1):
         album_id = album.uri.split(":")[-1]
         self.r.set("nr-uri:"+str(album_id), pickle.dumps(album))
@@ -47,11 +57,25 @@ class Datastore():
         self.r.set("artist:"+str(index), pickle.dumps(artist))
     
     @lru_cache(maxsize=50)
+    def getShow(self, index):
+        show_uri = self.r.get("show-index:"+str(index))
+        if(show_uri is None):
+            return None
+        return self.getShowUri(show_uri.decode('utf-8'))
+
+    @lru_cache(maxsize=50)
     def getPlaylist(self, index):
         playlist_uri = self.r.get("playlist-index:"+str(index))
         if (playlist_uri is None):
             return None
         return self.getPlaylistUri(playlist_uri.decode('utf-8'))
+
+    def getShowEpisodes(self, show_uri):
+        show_id = show_uri.split(":")[-1]
+        pickled_sh = self.r.get("show-episodes:"+str(show_id))
+        if(pickled_sh is None):
+            return None
+        return pickle.loads(pickled_sh)
 
     def getPlaylistTracks(self, playlist_uri):
         playlist_id = playlist_uri.split(":")[-1]
@@ -73,6 +97,14 @@ class Datastore():
         if (album_uri is None):
             return None
         return self.getNewReleaseUri(album_uri.decode('utf-8'))
+
+    @lru_cache(maxsize=50)
+    def getShowUri(self, uri):
+        show_id = str(uri).split(":")[-1]
+        pickled_sh = self.r.get("show-uri:"+str(show_id))
+        if(not pickled_sh):
+            return None
+        return pickle.loads(pickled_sh)
 
     @lru_cache(maxsize=50)
     def getPlaylistUri(self, uri):
@@ -131,6 +163,9 @@ class Datastore():
 
     def getAllNewReleases(self):
         return list(map(lambda idx: self._getSavedItem(idx), self.r.keys("nr-uri:*")))
+
+    def getAllSavedShows(self):
+        return list(map(lambda idx: self._getSavedItem(idx), self.r.keys("show-uri:*")))
 
     def clearDevices(self):
         devices = self.r.keys("device:*")
