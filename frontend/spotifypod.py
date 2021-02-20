@@ -2,6 +2,7 @@
 # This is me learning Python as I go.
 # This is not how I write code for my day job.
 
+import spotify_manager
 import tkinter as tk 
 import socket
 import json
