@@ -43,8 +43,7 @@ sudo apt install git
 
 ```sh
 git clone https://github.com/dupontgu/retro-ipod-spotify-client.git
-cd retro-ipod-spotify-client
-pip3 install -r requirements.txt
+pip3 install -r retro-ipod-spotify-client/frontend/requirements.txt
 ```
 
 4. Install pi-btaudio
