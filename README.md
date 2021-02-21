@@ -126,11 +126,11 @@ exec openbox-session #-> This is the one that launches Openbox ;)
 and add the following command to launch spotifypod.py:
 
 ```
-cd /home/pi/fork/retro-ipod-spotify-client/frontend/
+cd /home/pi/retro-ipod-spotify-client/frontend/
 
 sudo -H -u pi python3 spotifypod.py &
 
-sudo /home/pi/fork/retro-ipod-spotify-client/clickwheel/click &
+sudo /home/pi/retro-ipod-spotify-client/clickwheel/click &
 ```
 
 _Make sure that the paths are ok with your setup!!_
