@@ -71,11 +71,16 @@ https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&r
 
 7. raspi-config
 
-` sudo raspi-config`
+Run 
+```
+sudo raspi-config
+```
 
-_Console Autologin_
+and select following the options:
 
-_Display Option -> Screen Blanking -> Off_ if you want to avoid the screen turning black after a few seconds.
+_System Options -> Boot / Auto Login -> Console Autologin_
+
+_Display Option -> Screen Blanking -> No_ if you want to avoid the screen turning black after a few seconds.
 
 
 8. bash_profile
