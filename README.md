@@ -15,7 +15,7 @@ sudo apt-get upgrade
 2. Install Required Packages.
 
 Installation for python3-pip, raspotify, python3-tk, openbox
-```
+```sh
 
 sudo apt install python-setuptools python3-setuptools
 
@@ -23,17 +23,17 @@ sudo apt install python3-pip
 
 sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
-sudo apt-get install python3-tk 
+sudo apt install python3-tk 
 
-sudo apt-get install redis-server
+sudo apt install redis-server
 
-sudo apt-get install openbox
+sudo apt install openbox
 
 sudo apt install xorg
 
-sudo apt-get install lightdm
+sudo apt install lightdm
 
-sudo apt-get install x11-xserver-utils
+sudo apt install x11-xserver-utils
 
 sudo apt install git
 
