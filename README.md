@@ -9,13 +9,13 @@ Since we are using the lite version of raspbian, some extra packages need to be 
 1. Install updates 
 
 ```
-sudo apt-get update 
-sudo apt-get upgrade
+sudo apt update 
+sudo apt upgrade
 ```
 2. Install Required Packages.
 
 Installation for python3-pip, raspotify, python3-tk, openbox
-```
+```sh
 
 sudo apt install python-setuptools python3-setuptools
 
@@ -23,23 +23,27 @@ sudo apt install python3-pip
 
 sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
 
-sudo apt-get install python3-tk 
+sudo apt install python3-tk 
 
-sudo apt-get install redis-server
+sudo apt install redis-server
 
-sudo apt-get install openbox
+sudo apt install openbox
 
 sudo apt install xorg
 
-sudo apt-get install lightdm
+sudo apt install lightdm
 
-sudo apt-get install x11-xserver-utils
+sudo apt install x11-xserver-utils
+
+sudo apt install git
 
 ```
+
 3. Install Dependencies
 
-```
-pip3 install -r requirements.txt
+```sh
+git clone https://github.com/dupontgu/retro-ipod-spotify-client.git
+pip3 install -r retro-ipod-spotify-client/frontend/requirements.txt
 ```
 
 4. Install pi-btaudio
@@ -60,18 +64,25 @@ sudo make install
 6. Setup Spotify API
 
 First Create an App at https://developer.spotify.com/dashboard/applications/
-```
-https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1&scope=user-read-playback-state%20user-modify-playback-state%20user-read-currently-playing%20	app-remote-control%20streaming%20playlist-modify-public%20playlist-modify-private%20playlist-read-private%20playlist-read-collaborative
-```
 
+For more information on how to get a Spotify `CLIENT_ID`, `CLIENT_SECRET` and to set a `REDIRECT_URI`, you could visit the Spotify Docs section *Register Your App* [here](https://developer.spotify.com/documentation/general/guides/app-settings/).
+
+```
+https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1&scope=user-read-playback-state%20user-modify-playback-state%20user-read-currently-playing%20app-remote-control%20streaming%20playlist-modify-public%20playlist-modify-private%20playlist-read-private%20playlist-read-collaborative
+```
 
 7. raspi-config
 
-` sudo raspi-config`
+Run 
+```
+sudo raspi-config
+```
 
-_Console Autologin_
+and select following the options:
 
-_Display Option -> Screen Blanking -> Off_ if you want to avoid the screen turning black after a few seconds.
+_System Options -> Boot / Auto Login -> Console Autologin_
+
+_Display Option -> Screen Blanking -> No_ if you want to avoid the screen turning black after a few seconds.
 
 
 8. bash_profile
@@ -117,11 +128,11 @@ exec openbox-session #-> This is the one that launches Openbox ;)
 and add the following command to launch spotifypod.py:
 
 ```
-cd /home/pi/fork/retro-ipod-spotify-client/frontend/
+cd /home/pi/retro-ipod-spotify-client/frontend/
 
 sudo -H -u pi python3 spotifypod.py &
 
-sudo /home/pi/fork/retro-ipod-spotify-client/clickwheel/click &
+sudo /home/pi/retro-ipod-spotify-client/clickwheel/click &
 ```
 
 _Make sure that the paths are ok with your setup!!_
