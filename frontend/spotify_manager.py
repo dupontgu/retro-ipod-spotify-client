@@ -99,7 +99,7 @@ def get_playlist(id):
     for _, item in enumerate(results['tracks']['items']):
         track = item['track']
         tracks.append(UserTrack(track['name'], track['artists'][0]['name'], track['album']['name'], track['uri']))
-    return (UserPlaylist(results['name'], results['index'], results['uri'], len(tracks)), tracks)
+    return (UserPlaylist(results['name'], 0, results['uri'], len(tracks)), tracks) # return playlist index as 0 because it won't have a idx parameter when fetching directly from Spotify (and we don't need it here anyway)
 
 def get_album(id):
     # TODO optimize query
