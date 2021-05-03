@@ -8,48 +8,37 @@ Since we are using the lite version of raspbian, some extra packages need to be 
 
 1. Install updates 
 
-```
-sudo apt-get update 
+```BASH
+sudo apt-get update
 sudo apt-get upgrade
 ```
+
 2. Install Required Packages.
 
-Installation for python3-pip, raspotify, python3-tk, openbox
-```
-
-sudo apt install python-setuptools python3-setuptools
-
-sudo apt install python3-pip
+Installation for python3-pip, raspotify, python3-tk, openbox and their dependencies
+```BASH
+sudo apt install python3-setuptools python3-pip python3-tk redis-server ope box xorg lightdm x11-xserver-utils
 
 sudo curl -sL https://dtcooper.github.io/raspotify/install.sh | sh
-
-sudo apt-get install python3-tk 
-
-sudo apt-get install redis-server
-
-sudo apt-get install openbox
-
-sudo apt install xorg
-
-sudo apt-get install lightdm
-
-sudo apt-get install x11-xserver-utils
-
 ```
+
 3. Install Dependencies
 
-```
+```BASH
 pip3 install -r requirements.txt
 ```
 
 4. Install pi-btaudio
-```
+
+```BASH
 git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
 ```
+
 5. Install PiGPIO
-```
+
+```BASH
 wget https://github.com/joan2937/pigpio/archive/master.zip
 unzip master.zip
 cd pigpio-master
@@ -67,7 +56,7 @@ https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&r
 
 7. raspi-config
 
-` sudo raspi-config`
+`sudo raspi-config`
 
 _Console Autologin_
 
@@ -78,7 +67,7 @@ _Display Option -> Screen Blanking -> Off_ if you want to avoid the screen turni
 
 In *.bash_profile* added the following (if the file is not htere, you must create it)
 
-```
+```BASH
 #!/bin/bash
 
 [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
@@ -96,7 +85,7 @@ xset s noblank
 
 
 Inside, make sure the following is there:
-```
+```BASH
 #!/bin/sh
 
 # /etc/X11/xinit/xinitrc
@@ -116,7 +105,7 @@ exec openbox-session #-> This is the one that launches Openbox ;)
 
 and add the following command to launch spotifypod.py:
 
-```
+```BASH
 cd /home/pi/fork/retro-ipod-spotify-client/frontend/
 
 sudo -H -u pi python3 spotifypod.py &
@@ -128,7 +117,7 @@ _Make sure that the paths are ok with your setup!!_
 
 in ` sudo nano /etc/xdg/openbox/environment` all the variables needed to run spotifypod.py are set( SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,SPOTIPY_REDIRECT_URI)
 
-```
+```BASH
 export SPOTIPY_CLIENT_ID='your_SPOTIPY_CLIENT_ID'
 
 export SPOTIPY_CLIENT_SECRET='your_SPOTIPY_CLIENT_SECRET'
@@ -137,6 +126,7 @@ export SPOTIPY_REDIRECT_URI='your_SPOTIPY_REDIRECT_URI'
 ```
 
 11. Synchronizing Spotify data!
+
 Last but not least, if you want to make sure all your playlists artists, etc are synchronized every time you turn on your Spotypod, you can simply modify the script view_model.py with the following at line 16:
 
 `#spotify_manager.refresh_devices()`
@@ -159,7 +149,7 @@ Uncomment and fill the following line:
 
 And maybe you want also to consider the following:
 
-```
+```BASH
 # The displayed device type in Spotify clients. 
 
 # Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",
