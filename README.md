@@ -9,8 +9,7 @@ Since we are using the lite version of raspbian, some extra packages need to be 
 1. Install updates 
 
 ```BASH
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt update && sudo apt upgrade
 ```
 
 2. Install Required Packages.
