@@ -1,4 +1,5 @@
 import spotify_manager
+import re as re
 from functools import lru_cache 
 
 MENU_PAGE_SIZE = 6
@@ -382,7 +383,15 @@ class SingleArtistPage(MenuPage):
 
 class SinglePlaylistPage(MenuPage):
     def __init__(self, playlist, previous_page):
-        super().__init__(playlist.name, previous_page, has_sub_page=True)
+        # Credit for code to remove emoticons from string: https://stackoverflow.com/a/49986645
+        regex_pattern = re.compile(pattern = "["
+            u"\U0001F600-\U0001F64F"  # emoticons
+            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+            u"\U0001F680-\U0001F6FF"  # transport & map symbols
+            u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                            "]+", flags = re.UNICODE)
+
+        super().__init__(regex_pattern.sub(r'',playlist.name), previous_page, has_sub_page=True)
         self.playlist = playlist
         self.tracks = None
 
