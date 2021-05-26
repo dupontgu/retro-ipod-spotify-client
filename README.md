@@ -8,14 +8,14 @@ Since we are using the lite version of raspbian, some extra packages need to be 
 
 1. Install updates 
 
-```
+```bash
 sudo apt update 
 sudo apt upgrade
 ```
 2. Install Required Packages.
 
 Installation for python3-pip, raspotify, python3-tk, openbox
-```sh
+```bash
 
 sudo apt install python-setuptools python3-setuptools
 
@@ -41,19 +41,19 @@ sudo apt install git
 
 3. Install Dependencies
 
-```sh
+```bash
 git clone https://github.com/dupontgu/retro-ipod-spotify-client.git
 pip3 install -r retro-ipod-spotify-client/frontend/requirements.txt
 ```
 
 4. Install pi-btaudio
-```
+```bash
 git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
 ```
 5. Install PiGPIO
-```
+```bash
 wget https://github.com/joan2937/pigpio/archive/master.zip
 unzip master.zip
 cd pigpio-master
@@ -74,7 +74,7 @@ https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&r
 7. raspi-config
 
 Run 
-```
+```bash
 sudo raspi-config
 ```
 
@@ -89,7 +89,7 @@ _Display Option -> Screen Blanking -> No_ if you want to avoid the screen turnin
 
 In *.bash_profile* added the following (if the file is not htere, you must create it)
 
-```
+```bash
 #!/bin/bash
 
 [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && startx -- -nocursor
@@ -107,7 +107,7 @@ xset s noblank
 
 
 Inside, make sure the following is there:
-```
+```bash
 #!/bin/sh
 
 # /etc/X11/xinit/xinitrc
@@ -127,7 +127,7 @@ exec openbox-session #-> This is the one that launches Openbox ;)
 
 and add the following command to launch spotifypod.py:
 
-```
+```bash
 cd /home/pi/retro-ipod-spotify-client/frontend/
 
 sudo -H -u pi python3 spotifypod.py &
@@ -139,7 +139,7 @@ _Make sure that the paths are ok with your setup!!_
 
 in ` sudo nano /etc/xdg/openbox/environment` all the variables needed to run spotifypod.py are set( SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET,SPOTIPY_REDIRECT_URI)
 
-```
+```bash
 export SPOTIPY_CLIENT_ID='your_SPOTIPY_CLIENT_ID'
 
 export SPOTIPY_CLIENT_SECRET='your_SPOTIPY_CLIENT_SECRET'
@@ -170,7 +170,7 @@ Uncomment and fill the following line:
 
 And maybe you want also to consider the following:
 
-```
+```bash
 # The displayed device type in Spotify clients. 
 
 # Can be "unknown", "computer", "tablet", "smartphone", "speaker", "tv",
