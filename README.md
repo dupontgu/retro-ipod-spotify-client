@@ -52,6 +52,7 @@ git clone https://github.com/bablokb/pi-btaudio.git
 cd pi-btaudio
 sudo tools/install
 ```
+
 5. Install PiGPIO
 ```bash
 wget https://github.com/joan2937/pigpio/archive/master.zip
@@ -61,7 +62,13 @@ make
 sudo make install
 ```
 
-6. Setup Spotify API
+6. Compile click.c
+```bash
+cd /home/pi/retro-spotify-client/clickwheel
+gcc -Wall -pthread -o click click.c -lpigpio -lrt
+```
+
+7. Setup Spotify API
 
 First Create an App at https://developer.spotify.com/dashboard/applications/
 
@@ -71,23 +78,39 @@ For more information on how to get a Spotify `CLIENT_ID`, `CLIENT_SECRET` and to
 https://accounts.spotify.com/authorize?client_id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX&response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1&scope=user-read-playback-state%20user-modify-playback-state%20user-read-currently-playing%20app-remote-control%20streaming%20playlist-modify-public%20playlist-modify-private%20playlist-read-private%20playlist-read-collaborative
 ```
 
-7. raspi-config
+8. raspi-config
 
 Run 
 ```bash
 sudo raspi-config
 ```
 
-and select following the options:
+and select the following options:
 
 _System Options -> Boot / Auto Login -> Console Autologin_
+   
+if you want to avoid the screen turning black after a few seconds:
 
-_Display Option -> Screen Blanking -> No_ if you want to avoid the screen turning black after a few seconds.
+_Display Option -> Screen Blanking -> No_ 
 
+if you bought the screen from the tutorial edit `/boot/config.txt`:
 
-8. bash_profile
+comment out `hdmi_force_hotplug=1`:
+```bash
+#hdmi_force_hotplug=1
+```
+uncomment `sdtv_mode`:
+```bash
+sdtv_mode=0
+```
+uncomment `disable_overscan`:
+```bash
+disable_overscan=1
+```
 
-In *.bash_profile* added the following (if the file is not htere, you must create it)
+9. bash_profile
+
+In `~/.bash_profile` add the following (if the file is not there, you must create it)
 
 ```bash
 #!/bin/bash
@@ -99,9 +122,17 @@ In *.bash_profile* added the following (if the file is not htere, you must creat
 xset s off
 
 xset s noblank
+
+export SPOTIPY_CLIENT_ID='your_SPOTIPY_CLIENT_ID'
+
+export SPOTIPY_CLIENT_SECRET='your_SPOTIPY_CLIENT_SECRET'
+
+export SPOTIPY_REDIRECT_URI='http://localhost:8080'
+
+export DISPLAY=:0.0
 ```
 
-9. Configure xinitrc
+10. Configure xinitrc
 
 `sudo nano /etc/X11/xinit/xinitrc`
 
@@ -120,7 +151,8 @@ Inside, make sure the following is there:
 
 exec openbox-session #-> This is the one that launches Openbox ;)
 ```
-10. Run "spotifypod.py" with autostart
+
+11. Run "spotifypod.py" with autostart
 
 `sudo nano /etc/xdg/openbox/autostart`
 
@@ -130,7 +162,7 @@ and add the following command to launch spotifypod.py:
 ```bash
 cd /home/pi/retro-ipod-spotify-client/frontend/
 
-sudo -H -u pi python3 spotifypod.py &
+sudo -H -u pi --preserve-env=SPOTIPY_REDIRECT_URI,SPOTIPY_CLIENT_ID,SPOTIPY_CLIENT_SECRET python3 spotifypod.py &
 
 sudo /home/pi/retro-ipod-spotify-client/clickwheel/click &
 ```
@@ -147,7 +179,7 @@ export SPOTIPY_CLIENT_SECRET='your_SPOTIPY_CLIENT_SECRET'
 export SPOTIPY_REDIRECT_URI='your_SPOTIPY_REDIRECT_URI'
 ```
 
-11. Synchronizing Spotify data!
+12. Synchronizing Spotify data!
 Last but not least, if you want to make sure all your playlists artists, etc are synchronized every time you turn on your Spotypod, you can simply modify the script view_model.py with the following at line 16:
 
 `#spotify_manager.refresh_devices()`
@@ -158,7 +190,7 @@ Last but not least, if you want to make sure all your playlists artists, etc are
 instead of calling refresh_device, you can execute refresh_data. This will sync all your data and then will eceute refresh.devices. This will make the boot up way slower! but it will synchronize every single time you switch on :). 
 If you dont run at least once `refresh_data()` no playlist, artist or anything related with your account will be displayed!
 
-12. Configure Raspotify
+13. Configure Raspotify
 
 `sudo nano /etc/default/raspotify`
 
