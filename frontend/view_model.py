@@ -1,4 +1,5 @@
 import spotify_manager
+import re as re
 from functools import lru_cache 
 
 MENU_PAGE_SIZE = 6
@@ -301,12 +302,20 @@ class PlaylistsPage(MenuPage):
         super().__init__(self.get_title(), previous_page, has_sub_page=True)
         self.playlists = self.get_content()
         self.num_playlists = len(self.playlists)
+                
+        self.playlists.sort(key=self.get_idx) # sort playlists to keep order as arranged in Spotify library
 
     def get_title(self):
         return "Playlists"
 
     def get_content(self):
         return spotify_manager.DATASTORE.getAllSavedPlaylists()
+
+    def get_idx(self, e): # function to get idx from UserPlaylist for sorting
+        if type(e) == spotify_manager.UserPlaylist: # self.playlists also contains albums as it seems and they don't have the idx value
+            return e.idx
+        else:
+            return 0
 
     def total_size(self):
         return self.num_playlists
@@ -401,7 +410,15 @@ class SingleArtistPage(MenuPage):
 
 class SinglePlaylistPage(MenuPage):
     def __init__(self, playlist, previous_page):
-        super().__init__(playlist.name, previous_page, has_sub_page=True)
+        # Credit for code to remove emoticons from string: https://stackoverflow.com/a/49986645
+        regex_pattern = re.compile(pattern = "["
+            u"\U0001F600-\U0001F64F"  # emoticons
+            u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+            u"\U0001F680-\U0001F6FF"  # transport & map symbols
+            u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                            "]+", flags = re.UNICODE)
+
+        super().__init__(regex_pattern.sub(r'',playlist.name), previous_page, has_sub_page=True)
         self.playlist = playlist
         self.tracks = None
 

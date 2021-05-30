@@ -27,8 +27,8 @@ UDP_PORT = 9090
 
 DIVIDER_HEIGHT = 3
 
-UP_KEY_CODE = 8320768 if platform == "darwin" else 111
-DOWN_KEY_CODE = 8255233 if platform == "darwin" else 116
+UP_KEY_CODE = 8255233 if platform == "darwin" else 111
+DOWN_KEY_CODE = 8320768 if platform == "darwin" else 116
 LEFT_KEY_CODE = 8124162 if platform == "darwin" else 113
 RIGHT_KEY_CODE = 8189699 if platform == "darwin" else 114
 PREV_KEY_CODE = 2818092 if platform == "darwin" else 0
@@ -86,7 +86,14 @@ class tkinterApp(tk.Tk):
         global LARGEFONT, MED_FONT, SCALE
         # __init__ function for class Tk 
         tk.Tk.__init__(self, *args, **kwargs)
-        SCALE = self.winfo_screenheight() / 930
+
+        if (platform == 'darwin'):
+            self.geometry("320x240")
+            SCALE = 0.3
+        else:
+            self.attributes('-fullscreen', True)
+            SCALE = self.winfo_screenheight() / 930
+
         LARGEFONT =("ChicagoFLF", int(72 * SCALE))
         MED_FONT =("ChicagoFLF", int(52 * SCALE))
         # creating a container 
@@ -544,7 +551,6 @@ app = tkinterApp()
 render(app, page.render())
 app.overrideredirect(True)
 app.overrideredirect(False)
-app.attributes('-fullscreen',True)
 sock = socket.socket(socket.AF_INET, # Internet
                      socket.SOCK_DGRAM) # UDP
 sock.bind((UDP_IP, UDP_PORT))
@@ -573,7 +579,3 @@ def app_main_loop():
 app.bind('<KeyPress>', onKeyPress)
 app.after(5, app_main_loop)
 app.mainloop()
-    
-
-
-

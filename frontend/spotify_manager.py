@@ -66,9 +66,10 @@ class UserArtist():
         return self.name
 
 class UserPlaylist(): 
-    __slots__ = ['name', 'uri', 'track_count']
-    def __init__(self, name, uri, track_count):
+    __slots__ = ['name', 'idx', 'uri', 'track_count']
+    def __init__(self, name, idx, uri, track_count):
         self.name = name
+        self.idx = idx
         self.uri = uri
         self.track_count = track_count
 
@@ -83,7 +84,18 @@ class SearchResults():
         self.albums = albums
         self.album_track_map = album_track_map
 
-scope = "user-library-read,user-follow-read,app-remote-control,streaming,playlist-read-private,playlist-read-collaborative,user-read-playback-state,user-read-currently-playing,user-read-recently-played,user-top-read,user-read-playback-position"
+scope = "user-follow-read," \
+        "user-library-read," \
+        "user-library-modify," \
+        "user-modify-playback-state," \
+        "user-read-playback-state," \
+        "user-read-currently-playing," \
+        "app-remote-control," \
+        "playlist-read-private," \
+        "playlist-read-collaborative," \
+        "playlist-modify-public," \
+        "playlist-modify-private," \
+        "streaming"
 
 DATASTORE = datastore.Datastore()
 
@@ -111,7 +123,7 @@ def get_playlist(id):
     for _, item in enumerate(results['tracks']['items']):
         track = item['track']
         tracks.append(UserTrack(track['name'], track['artists'][0]['name'], track['album']['name'], track['uri']))
-    return (UserPlaylist(results['name'], results['uri'], len(tracks)), tracks)
+    return (UserPlaylist(results['name'], 0, results['uri'], len(tracks)), tracks) # return playlist index as 0 because it won't have a idx parameter when fetching directly from Spotify (and we don't need it here anyway)
 
 def get_show(id):
     results = sp.show(id)
@@ -216,17 +228,20 @@ def refresh_data():
     print("Spotify artists fetched: " + str(DATASTORE.getArtistCount()))
 
     results = sp.current_user_playlists(limit=pageSize)
+    totalindex = 0 # variable to preserve playlist sort index when calling offset loop down below
     while(results['next']):
         offset = results['offset']
         for idx, item in enumerate(results['items']):
             tracks = get_playlist_tracks(item['id'])
-            DATASTORE.setPlaylist(UserPlaylist(item['name'], item['uri'], len(tracks)), tracks, index=idx + offset)
+            DATASTORE.setPlaylist(UserPlaylist(item['name'], totalindex, item['uri'], len(tracks)), tracks, index=idx + offset)
+            totalindex = totalindex + 1
         results = sp.next(results)
 
     offset = results['offset']
     for idx, item in enumerate(results['items']):
         tracks = get_playlist_tracks(item['id'])
-        DATASTORE.setPlaylist(UserPlaylist(item['name'], item['uri'], len(tracks)), tracks, index=idx + offset)
+        DATASTORE.setPlaylist(UserPlaylist(item['name'], totalindex, item['uri'], len(tracks)), tracks, index=idx + offset)
+        totalindex = totalindex + 1
 
     print("Spotify playlists fetched: " + str(DATASTORE.getPlaylistCount()))
 
