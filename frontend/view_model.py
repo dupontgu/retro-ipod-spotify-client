@@ -278,6 +278,25 @@ class MenuPage():
                 lines.append(EMPTY_LINE_ITEM)
         return MenuRendering(lines=lines, header=self.header, page_start=self.index, total_count=total_size)
 
+class ShowsPage(MenuPage):
+    def __init__(self, previous_page):
+        super().__init__(self.get_title(), previous_page, has_sub_page=True)
+        self.shows = self.get_content()
+        self.num_shows = len(self.shows)
+
+    def get_title(self):
+        return "Podcasts"
+    
+    def get_content(self):
+        return spotify_manager.DATASTORE.getAllSavedShows()
+
+    def total_size(self):
+        return self.num_shows
+
+    @lru_cache(maxsize=15)
+    def page_at(self, index):
+        return SingleShowPage(self.shows[index], self)
+
 class PlaylistsPage(MenuPage):
     def __init__(self, previous_page):
         super().__init__(self.get_title(), previous_page, has_sub_page=True)
@@ -416,6 +435,25 @@ class SinglePlaylistPage(MenuPage):
         command = NowPlayingCommand(lambda: spotify_manager.play_from_playlist(self.playlist.uri, track.uri, None))
         return NowPlayingPage(self, track.title, command)
 
+class SingleShowPage(MenuPage):
+    def __init__(self, show, previous_page):
+        super().__init__(show.name, previous_page, has_sub_page=True)
+        self.show = show
+        self.episodes = None
+
+    def get_episodes(self):
+        if self.episodes is None:
+            self.episodes = spotify_manager.DATASTORE.getShowEpisodes(self.show.uri)
+        return self.episodes
+
+    def total_size(self):
+        return self.show.episode_count
+
+    def page_at(self, index):
+        episode = self.get_episodes()[index]
+        command = NowPlayingCommand(lambda: spotify_manager.play_from_show(self.show.uri, episode.uri, None))
+        return NowPlayingPage(self, episode.name, command)
+
 class InMemoryPlaylistPage(SinglePlaylistPage):
     def __init__(self, playlist, tracks, previous_page):
         super().__init__(playlist, previous_page)
@@ -433,6 +471,19 @@ class SingleTrackPage(MenuPage):
         print("render track")
         context_uri = self.playlist.uri if self.playlist else self.album.uri
         spotify_manager.play_from_playlist(context_uri, self.track.uri, None)
+        return r
+
+class SingleEpisodePage(MenuPage):
+    def __init__(self, episode, previous_page, show = None):
+        super().__init__(episode.name, previous_page, has_sub_page=False)
+        self.episode = episode
+        self.show = show
+
+    def render(self):
+        r = super().render()
+        print("render episode")
+        context_uri = self.show.uri
+        spotify_manager.play_from_show(context_uri, self.episode.uri, None)
         return r
 
 class SavedTracksPage(MenuPage):
@@ -458,6 +509,7 @@ class RootPage(MenuPage):
             AlbumsPage(self),
             NewReleasesPage(self),
             PlaylistsPage(self),
+            ShowsPage(self),
             SearchPage(self),
             NowPlayingPage(self, "Now Playing", NowPlayingCommand())
         ]
